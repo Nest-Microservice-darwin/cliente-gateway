@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Body, Post, Delete,Patch, Inject } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
 
 
@@ -17,9 +18,9 @@ export class ProductosController {
   }
 
   @Get()
-  buscarVariosProduct() {
+  buscarVariosProduct( @Query() paginationDto: PaginationDto ) {
     //return 'Esta funcion regresa varios Productos';
-    return this.productoClient.send({cmd: 'find_all_products'},{})
+    return this.productoClient.send({cmd: 'find_all_products'},{paginationDto})
   }
 
   @Get(':id')
