@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query, BadRequestException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
 
@@ -20,12 +21,37 @@ export class ProductosController {
   @Get()
   buscarVariosProduct( @Query() paginationDto: PaginationDto ) {
     //return 'Esta funcion regresa varios Productos';
-    return this.productoClient.send({cmd: 'find_all_products'},{paginationDto})
+    return this.productoClient.send({cmd: 'find_all_products'},paginationDto)
   }
 
+  /*
   @Get(':id')
   buscarXidProduct(@Param('id') id: string) {
-    return 'Esta funcion regresa un producto  con Id:' + id;
+    //return 'Esta funcion regresa un producto  con Id:' + id;
+    return this.productoClient.send({cmd: 'find_one_product'},{id:id})
+
+
+  }
+    */
+  @Get(':id')
+  async buscarXidProduct(@Param('id') id: string) {
+    
+    try {
+
+       const producto = await firstValueFrom(
+        this.productoClient.send({cmd: 'find_one_product'},{id})
+      );
+
+      return producto;
+      
+    } catch (error) {
+
+      throw new BadRequestException(error);
+      
+    }
+    
+
+
   }
 
   @Delete(':id')
