@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-
 import { Catch, RpcExceptionFilter, ArgumentsHost } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 import { RpcException } from '@nestjs/microservices';
