@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query, BadRequestException } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
@@ -46,7 +46,8 @@ export class ProductosController {
       
     } catch (error) {
 
-      throw new BadRequestException(error);
+      //throw new BadRequestException(error);
+      throw new RpcException(error);
       
     }
     
