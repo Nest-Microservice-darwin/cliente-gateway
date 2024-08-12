@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query  } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query, ParseIntPipe  } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-//import { catchError  } from 'rxjs';
+import { catchError  } from 'rxjs';
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 
 @Controller('productos')
@@ -16,8 +18,9 @@ export class ProductosController {
 
 
   @Post()
-  CreateProduct() {
-    return 'Crear un producto';
+  CreateProduct(@Body() crearPoroductoDto: CreateProductDto) {
+    //return 'Crear un producto';
+    return this.productoClient.send( {cmd: 'create_product'},crearPoroductoDto);
   }
 
   @Get()
@@ -66,16 +69,25 @@ export class ProductosController {
 
   @Delete(':id')
   deleterXidProduct(@Param('id') id: string) {
-    return 'Esta funcion Elimina un producto con Id:' + id;
+    return this.productoClient.send({cmd: 'delete_products'},{id: id}).pipe(
+      catchError(err => { throw new RpcException(err);
+        
+       }),
+   );
   }
 
   @Patch(':id')
   updateXidProduct(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Body() body: any
+    @Body() updateProductoDto:UpdateProductDto,
   ) {
-    return 'Esta funcion actualiza el producto'+id ;
+    return this.productoClient.send({cmd: 'update_products'}, {
+      id, ...updateProductoDto
+    }).pipe(
+      catchError(err => { throw new RpcException(err) })
+   );
+    //return {id, updateProductoDto}
   }
 
 };
