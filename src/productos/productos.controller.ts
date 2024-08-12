@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query, BadRequestException } from '@nestjs/common';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Controller, Get, Param, Body, Post, Delete,Patch, Inject, Query  } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+//import { catchError  } from 'rxjs';
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
 
@@ -35,7 +37,14 @@ export class ProductosController {
     */
   @Get(':id')
   async buscarXidProduct(@Param('id') id: string) {
-    
+    /* MANERA "B"
+    return  this.productoClient.send({cmd: 'find_one_product'},{id})
+     .pipe(
+        catchError(err => { throw new RpcException(err) })
+     )
+*/
+
+   /* manera "A" */
     try {
 
        const producto = await firstValueFrom(
@@ -48,10 +57,10 @@ export class ProductosController {
 
       //throw new BadRequestException(error);
       throw new RpcException(error);
-      
+  
     }
-    
-
+     
+// aqui el cierre del modo b */
 
   }
 
