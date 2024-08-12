@@ -1,10 +1,14 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Body, Post, Delete,Patch } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Delete,Patch, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { PRODUCT_SERVICE } from 'src/config';
 
 
 @Controller('productos')
 export class ProductosController {
-  constructor() {}
+  constructor(
+    @Inject(PRODUCT_SERVICE) private readonly productoClient:ClientProxy,
+  ) {}
 
 
   @Post()
@@ -14,7 +18,8 @@ export class ProductosController {
 
   @Get()
   buscarVariosProduct() {
-    return 'Esta funcion regresa varios Productos';
+    //return 'Esta funcion regresa varios Productos';
+    return this.productoClient.send({cmd: 'find_all_products'},{})
   }
 
   @Get(':id')
@@ -30,6 +35,7 @@ export class ProductosController {
   @Patch(':id')
   updateXidProduct(
     @Param('id') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() body: any
   ) {
     return 'Esta funcion actualiza el producto'+id ;
