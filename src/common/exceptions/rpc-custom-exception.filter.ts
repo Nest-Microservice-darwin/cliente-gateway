@@ -9,7 +9,8 @@ import { RpcException } from '@nestjs/microservices';
 export class RpcCustomExceptionFilter implements RpcExceptionFilter<RpcException> {
   
   catch(exception: RpcException, host: ArgumentsHost): Observable<any> {
+    console.log('paso por aqui nuestro custon filter ',host);
     return throwError(() => exception.getError());
-    console.log(host);
+    
   }
 }
